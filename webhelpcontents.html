@@ -1,0 +1,301 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<!-- saved from url=(0014)about:internet -->
+<html>
+<head>
+<title>Help1</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<style type="text/css"> 
+<!--
+body{margin: 5px;} 
+.selected {font-weight: normal;background-color: #E2E2E2;padding:0px,2px,0px,2px;}
+.unselected { font-weight: normal;padding:0px,2px,0px,2px;}
+.hand { cursor: hand; }
+.p {height: 16px;width: 16px;vertical-align: middle;border: 0;}
+div,body { font-family: Tahoma, Verdana; font-size: 11px; }
+A:link {text-decoration: none; color:#000000}
+A:visited {text-decoration: none; color: #000000}
+A:active {text-decoration: none; color: #000000 }
+A:hover {text-decoration: none; color: #FF0000 }
+
+-->
+</style>
+
+<SCRIPT LANGUAGE="JavaScript">
+<!--
+var cl,pn,pm,bl;
+var path = 'icons/';
+var pos = 0;
+var icon;
+var tar = 'content';
+var display;
+var imgi;
+var AutoCollapse;
+var LastSelected = -1;
+var loaded = false;
+var max;
+var divlist;
+
+function SetEnv(v,a){
+
+if(v==0){ 
+	pn = [['daplus.gif','daminus.gif'],['tplus.gif','tminus.gif'],['uaplus.gif','uaminus.gif'],['splus.gif','sminus.gif']];
+	PreloadImg('downangle.gif','tshaped.gif','upangle.gif','sline.gif','daplus.gif','daminus.gif','tplus.gif','tminus.gif','uaplus.gif','uaminus.gif','splus.gif','sminus.gif','blank.gif','line.gif');
+}else{
+	pn = [['plus.gif','minus.gif']];
+	PreloadImg('plus.gif','minus.gif','blank.gif');
+
+}
+AutoCollapse = a;
+}
+
+ function PreloadImg(){
+if (document.images) { 
+	var imgs = PreloadImg.arguments; 
+	var pload = new Array();
+	for (var i=0; i<imgs.length; i++) { 
+		pload[i] = new Image; 
+		pload[i].src = path + imgs[i]; 
+	} 
+} 
+ } 
+
+function get(o){
+var x;
+if(document.all) x=document.all[o]; 
+if(document.getElementById) x=document.getElementById(o);
+
+return x;
+}
+
+
+function pnImg(img){
+var i,j;
+for(i=0;i<=3;i++){
+	for(j=0;j<=1;j++){
+	if(img.substr(img.lastIndexOf('/') + 1)== pn[i][j]){
+		return i;
+	}
+	}
+}
+}
+function icon(img){
+var f;
+f = img.substr(img.lastIndexOf('/') + 1);
+if( f=='1.gif' || f=='2.gif'){
+	return ['1.gif','2.gif'];
+}
+if( f=='3.gif' || f=='4.gif'){
+	return ['3.gif','4.gif'];
+}
+if( f=='5.gif' || f=='6.gif'){
+	return ['5.gif','6.gif'];
+}
+if( f=='7.gif' || f=='8.gif'){
+	return ['7.gif','8.gif'];
+}
+return [f,f];
+}
+
+function show(id){
+get('d' + id).style.display='block';
+if(get('imgn' + id )) get('imgn' + id ).src= path + pn[pnImg(get('imgn' + id ).src)][1];
+get('img' + id ).src= path + icon(get('img' + id ).src)[1];
+
+}
+
+function collapse(id){
+get('d' + id ).style.display='none';
+if(get('imgn' + id )) get('imgn' + id ).src= path + pn[pnImg(get('imgn' + id ).src)][0];
+get('img' + id ).src= path + icon(get('img' + id ).src)[0];
+
+}
+
+function collapseAll(){
+var i;
+var o;
+for(i=0;i<=divlist.length-1;i++){
+	if(o=get('d' + divlist[i])){
+		if(o.style.display!='none'){ 
+			collapse(divlist[i]);
+		}
+	}
+}
+}
+
+function showAll(){
+var i;
+var o;
+for(i=0;i<=divlist.length-1;i++){
+	if(o=get('d' + divlist[i])){
+		if(o.style.display!='block'){ 
+			show(divlist[i]);
+		}
+	}
+}
+}
+
+function unselectAll(){
+var i=0;
+while(get("l" + i)){
+	get("l" + i).className = "unselected";
+	i++;
+}
+}
+
+function clickNode(index){
+var e;
+
+e = get("l" + index);
+if(e==null) return;
+e = e.parentNode;
+if(e.nodeName == 'A'){
+	if(e.href!= window.location.href + '#'){
+		parent.parent.content.location.href = e.href;
+	}else{
+		selectNode(index);
+	}
+	e.onclick;
+}
+}
+
+function showParent(ele){
+var e;
+e = ele.parentNode;
+
+if(e==null) return;
+
+if(e.nodeName == 'DIV'){
+	if(e.id!='') show(e.id.substring(1,e.id.length ));
+}else if(e.nodeName == 'A'){
+
+}
+showParent(e);
+}
+
+function showNode(index){
+showParent(get("l" + index));
+LinkClick(index);
+}
+
+function selectNode(index){
+if(LastSelected!=index){
+//collapseAll();
+showParent(get("l" + index));
+LinkClick(index);
+get('l' + index).scrollIntoView(true);
+
+
+//alert(get('l' + index).offsetHeight + '|' + document.body.clientHeight + '|' + document.body.offsetHeight);
+window.scrollTo(0,document.body.scrollTop); // - document.body.clientHeight /3);
+}
+}
+
+
+function NodeClick(id){
+if(get('d' + id ).style.display=='none'){
+	show(id);
+}else{
+	collapse(id);
+}
+return false;
+}
+
+function LinkDblClick(id){
+if(!AutoCollapse){
+	if(get('d' + id ).style.display=='none'){
+		show(id);
+	}else{
+		collapse(id);
+	}
+}
+return false;
+}
+
+function LinkClick(index,hasChild,r){
+if(AutoCollapse && hasChild){
+	if(get('d' + index ).style.display=='none'){
+		collapseAll()
+		showParent(get('l' + index));
+		show(index);
+	}else{
+		collapseAll()
+		showParent(get('l' + index));	
+		collapse(index);
+	}
+}
+if(LastSelected!=-1){
+	get('l' + LastSelected).className = "unselected";
+}
+get('l' + index).className = "selected";
+LastSelected = index;
+return r;
+}
+
+function body_onmousemove(event){
+if(typeof(document.body.scrollTop)!='undefined'){
+if(parseInt(event.clientX)<5){
+window.scroll(0,document.body.scrollTop);}}
+if(typeof(window.scrollY)!='undefined'){
+if(parseInt(event.clientX)<5){
+window.scrollTo(0,window.scrollY);}}
+}
+
+window.defaultStatus = '';
+
+function body_onload(){
+get('loading').style.display='none';
+loaded = true;
+if(parent.parent.content.document.readyState){
+	if(parent.parent.content.document.readyState == 'complete'){
+		try{parent.parent.content.syn();}catch(e){};
+	}
+}else{
+	if(parent.parent.contentLoaded){
+		try{parent.parent.content.syn();}catch(e){};
+	}
+}
+}
+
+//-->
+</SCRIPT>
+<script language="JavaScript" src="languages.js"></script>
+</head>
+
+<body bgcolor="#FFFFFF" onmousemove="body_onmousemove(event);" onload="body_onload();">
+<div id="loading"><font color="#FF0000" size="1"> Loading table of contents... 
+</font><br><br></div>
+<script>SetEnv(0,false)</script><div><nobr><img src="icons/downangle.gif" class="p"><a href="pages/kimosource-help-document.html" onclick="return LinkClick('0',false,true)" target="content" title="KimoSource Help Document" onmousemove="window.status='KimoSource Help Document'"><img src="icons/11.gif" class="p"> <span id="l0" class="unselected">KimoSource Help Document</span></a></nobr></div>
+<div><nobr><a href="#" onClick="return NodeClick('1')"><img id="imgn1" src="icons/tplus.gif" class="p"></a><a href="#" onclick="return LinkClick('1',true,false)" onDblClick="return LinkDblClick('1')" target="content" title="Controls" onmousemove="window.status='Controls'"><img id="img1" src="icons/1.gif" class="p"> <span id="l1" class="unselected">Controls</span></a></nobr></div>
+<div id="d1" style="display:none"><div><nobr><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="pages/desktop-application.html" onclick="return LinkClick('2',false,true)" target="content" title="Desktop Application" onmousemove="window.status='Desktop Application'"><img src="icons/11.gif" class="p"> <span id="l2" class="unselected">Desktop Application</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/upangle.gif" class="p"><a href="pages/web-application.html" onclick="return LinkClick('3',false,true)" target="content" title="Web Application" onmousemove="window.status='Web Application'"><img src="icons/11.gif" class="p"> <span id="l3" class="unselected">Web Application</span></a></nobr></div>
+</div><div><nobr><img src="icons/tshaped.gif" class="p"><a href="pages/global-controls.html" onclick="return LinkClick('4',false,true)" target="content" title="Global Controls" onmousemove="window.status='Global Controls'"><img src="icons/11.gif" class="p"> <span id="l4" class="unselected">Global Controls</span></a></nobr></div>
+<div><nobr><a href="#" onClick="return NodeClick('5')"><img id="imgn5" src="icons/tplus.gif" class="p"></a><a href="#" onclick="return LinkClick('5',true,false)" onDblClick="return LinkDblClick('5')" target="content" title="How to get help" onmousemove="window.status='How to get help'"><img id="img5" src="icons/1.gif" class="p"> <span id="l5" class="unselected">How to get help</span></a></nobr></div>
+<div id="d5" style="display:none"><div><nobr><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="pages/help-functionality.html" onclick="return LinkClick('6',false,true)" target="content" title="Help Functionality" onmousemove="window.status='Help Functionality'"><img src="icons/11.gif" class="p"> <span id="l6" class="unselected">Help Functionality</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/upangle.gif" class="p"><a href="pages/how-to-get-additional-help.html" onclick="return LinkClick('7',false,true)" target="content" title="How to get additional help" onmousemove="window.status='How to get additional help'"><img src="icons/11.gif" class="p"> <span id="l7" class="unselected">How to get additional help</span></a></nobr></div>
+</div><div><nobr><a href="#" onClick="return NodeClick('8')"><img id="imgn8" src="icons/tplus.gif" class="p"></a><a href="#" onclick="return LinkClick('8',true,false)" onDblClick="return LinkDblClick('8')" target="content" title="Desktop Application Functionality (Admin)" onmousemove="window.status='Desktop Application Functionality (Admin)'"><img id="img8" src="icons/1.gif" class="p"> <span id="l8" class="unselected">Desktop Application Functionality (Admin)</span></a></nobr></div>
+<div id="d8" style="display:none"><div><nobr><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="pages/login.html" onclick="return LinkClick('9',false,true)" target="content" title="Login" onmousemove="window.status='Login'"><img src="icons/11.gif" class="p"> <span id="l9" class="unselected">Login</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="pages/customer.html" onclick="return LinkClick('10',false,true)" target="content" title="Customer" onmousemove="window.status='Customer'"><img src="icons/11.gif" class="p"> <span id="l10" class="unselected">Customer</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="pages/search-order.html" onclick="return LinkClick('11',false,true)" target="content" title="Search Order" onmousemove="window.status='Search Order'"><img src="icons/11.gif" class="p"> <span id="l11" class="unselected">Search Order</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="pages/view-quotation-requests.html" onclick="return LinkClick('12',false,true)" target="content" title="View Quotation Requests" onmousemove="window.status='View Quotation Requests'"><img src="icons/11.gif" class="p"> <span id="l12" class="unselected">View Quotation Requests</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="pages/generate-quotation.html" onclick="return LinkClick('13',false,true)" target="content" title="Generate Quotation" onmousemove="window.status='Generate Quotation'"><img src="icons/11.gif" class="p"> <span id="l13" class="unselected">Generate Quotation</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="pages/finalise-order.html" onclick="return LinkClick('14',false,true)" target="content" title="Finalise Order" onmousemove="window.status='Finalise Order'"><img src="icons/11.gif" class="p"> <span id="l14" class="unselected">Finalise Order</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="pages/capture-return-order.html" onclick="return LinkClick('15',false,true)" target="content" title="Capture Return Order" onmousemove="window.status='Capture Return Order'"><img src="icons/11.gif" class="p"> <span id="l15" class="unselected">Capture Return Order</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="pages/product-type.html" onclick="return LinkClick('16',false,true)" target="content" title="Product Type" onmousemove="window.status='Product Type'"><img src="icons/11.gif" class="p"> <span id="l16" class="unselected">Product Type</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="pages/product-category.html" onclick="return LinkClick('17',false,true)" target="content" title="Product Category" onmousemove="window.status='Product Category'"><img src="icons/11.gif" class="p"> <span id="l17" class="unselected">Product Category</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="javascript:alert('This link is purposely disabled, because the document is created with WinCHM TRIAL version!\n(The registered version will not do so!)');" onclick="return LinkClick('18',false,true)" target="content" title="Product Size" onmousemove="window.status='Product Size'"><img src="icons/11.gif" class="p"> <span id="l18" class="unselected">Product Size</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="pages/job-type.html" onclick="return LinkClick('19',false,true)" target="content" title="Job Type" onmousemove="window.status='Job Type'"><img src="icons/11.gif" class="p"> <span id="l19" class="unselected">Job Type</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="pages/supplier.html" onclick="return LinkClick('20',false,true)" target="content" title="Supplier" onmousemove="window.status='Supplier'"><img src="icons/11.gif" class="p"> <span id="l20" class="unselected">Supplier</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="pages/place-supplier-order.html" onclick="return LinkClick('21',false,true)" target="content" title="Place Supplier Order" onmousemove="window.status='Place Supplier Order'"><img src="icons/11.gif" class="p"> <span id="l21" class="unselected">Place Supplier Order</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/upangle.gif" class="p"><a href="pages/employee.html" onclick="return LinkClick('22',false,true)" target="content" title="Employee" onmousemove="window.status='Employee'"><img src="icons/11.gif" class="p"> <span id="l22" class="unselected">Employee</span></a></nobr></div>
+</div><div><nobr><a href="#" onClick="return NodeClick('23')"><img id="imgn23" src="icons/uaplus.gif" class="p"></a><a href="#" onclick="return LinkClick('23',true,false)" onDblClick="return LinkDblClick('23')" target="content" title="Web Application Functionality (Customer)" onmousemove="window.status='Web Application Functionality (Customer)'"><img id="img23" src="icons/1.gif" class="p"> <span id="l23" class="unselected">Web Application Functionality (Customer)</span></a></nobr></div>
+<div id="d23" style="display:none"><div><nobr><img src="icons/blank.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="pages/register-user-signup.html" onclick="return LinkClick('24',false,true)" target="content" title="Register User (Signup)" onmousemove="window.status='Register User (Signup)'"><img src="icons/11.gif" class="p"> <span id="l24" class="unselected">Register User (Signup)</span></a></nobr></div>
+<div><nobr><img src="icons/blank.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="pages/login1.html" onclick="return LinkClick('25',false,true)" target="content" title="Login" onmousemove="window.status='Login'"><img src="icons/11.gif" class="p"> <span id="l25" class="unselected">Login</span></a></nobr></div>
+<div><nobr><img src="icons/blank.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="pages/logout.html" onclick="return LinkClick('26',false,true)" target="content" title="Logout" onmousemove="window.status='Logout'"><img src="icons/11.gif" class="p"> <span id="l26" class="unselected">Logout</span></a></nobr></div>
+<div><nobr><img src="icons/blank.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="pages/request-quotation.html" onclick="return LinkClick('27',false,true)" target="content" title="Request Quotation" onmousemove="window.status='Request Quotation'"><img src="icons/11.gif" class="p"> <span id="l27" class="unselected">Request Quotation</span></a></nobr></div>
+<div><nobr><img src="icons/blank.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="pages/complete-product-design.html" onclick="return LinkClick('28',false,true)" target="content" title="Complete Product Design" onmousemove="window.status='Complete Product Design'"><img src="icons/11.gif" class="p"> <span id="l28" class="unselected">Complete Product Design</span></a></nobr></div>
+<div><nobr><img src="icons/blank.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="javascript:alert('This link is purposely disabled, because the document is created with WinCHM TRIAL version!\n(The registered version will not do so!)');" onclick="return LinkClick('29',false,true)" target="content" title="View Quotation" onmousemove="window.status='View Quotation'"><img src="icons/11.gif" class="p"> <span id="l29" class="unselected">View Quotation</span></a></nobr></div>
+<div><nobr><img src="icons/blank.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="pages/accept-quotation.html" onclick="return LinkClick('30',false,true)" target="content" title="Accept Quotation" onmousemove="window.status='Accept Quotation'"><img src="icons/11.gif" class="p"> <span id="l30" class="unselected">Accept Quotation</span></a></nobr></div>
+<div><nobr><img src="icons/blank.gif" class="p"><img src="icons/upangle.gif" class="p"><a href="pages/view-product-design.html" onclick="return LinkClick('31',false,true)" target="content" title="View Product Design" onmousemove="window.status='View Product Design'"><img src="icons/11.gif" class="p"> <span id="l31" class="unselected">View Product Design</span></a></nobr></div>
+</div><script>divlist = [1,5,8,23]</script>
+</body>
+</html>
